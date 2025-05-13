@@ -1,0 +1,20 @@
+{
+  "name": "asistencia-web",
+  "version": "1.0.0",
+  "description": "Sistema de asistencia para docentes y tutores",
+  "main": "index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "Edwing",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^10.11.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
