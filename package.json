@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "cd reporte && vite build",
     "dev": "vite"
   },
   "keywords": [],
