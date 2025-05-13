@@ -1,4 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
-<!-- contenido recortado por brevedad -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio</title>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <div class="menu-container" id="inicio">
+    <h1>Selecciona tu rol</h1>
+    <button class="docente-btn" onclick="mostrarLogin()">Docente</button>
+    <button class="tutor-btn" onclick="mostrarConsultaTutor()">Tutor</button>
+  </div>
+
+  <div class="menu-container hidden" id="loginDocente">
+    <h2>Iniciar sesión - Docente</h2>
+    <input type="email" id="usuario" placeholder="Correo electrónico">
+    <input type="password" id="contrasena" placeholder="Contraseña">
+    <button class="docente-btn" onclick="accederDocente()">Acceder</button>
+    <button class="tutor-btn" onclick="mostrarRegistro()">¿No tienes cuenta? Regístrate</button>
+  </div>
+
+  <div class="menu-container hidden" id="registroDocente">
+    <h2>Registro - Nuevo Docente</h2>
+    <input type="text" id="nombreDocente" placeholder="Nombre completo">
+    <input type="email" id="nuevoUsuario" placeholder="Correo electrónico">
+    <input type="password" id="nuevaContrasena" placeholder="Contraseña">
+    <button class="docente-btn" onclick="registrarDocente()">Registrar</button>
+    <button class="tutor-btn" onclick="cancelarRegistro()">Cancelar</button>
+  </div>
+
+  <div class="menu-container hidden" id="panelDocente">
+    <h2>Panel Docente</h2>
+    <button onclick="mostrarPasarLista()">📝 Pasar Lista</button>
+    <button onclick="window.location.href='grupos.html'">📁 Gestionar Grupos</button>
+    <button onclick="window.location.href='usuarios.html'">👥 Gestionar Usuarios</button>
+    <button onclick="mostrarConsulta()">📚 Consultar Asistencia</button>
+    <button onclick="cerrarSesion()">🔓 Cerrar sesión</button>
+  </div>
+
+  <div class="menu-container hidden" id="panelTutor">
+    <h2>Consulta para Tutores</h2>
+    <button onclick="mostrarConsulta()">📚 Consultar Asistencia</button>
+    <button onclick="mostrarInicio()" style="margin-top: 10px; background-color: #6c757d;">🔙 Volver al menú principal</button>
+  </div>
+
+  <div class="menu-container hidden" id="consultaPanel">
+    <h2>Consulta de Asistencia</h2>
+    <p>Aquí se puede mostrar la asistencia por alumno o grupo.</p>
+    <button onclick="mostrarInicio()">🔙 Volver</button>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAMHjRifpeu9WYX5N51p2qL2C6hLThluIk",
+      authDomain: "asistencia-787da.firebaseapp.com",
+      projectId: "asistencia-787da",
+      appId: "1:371727664223:web:7100d99821e5960fe7c7ea"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    function mostrarLogin() {
+      ocultarTodo();
+      document.getElementById("loginDocente").classList.remove("hidden");
+    }
+
+    function mostrarConsultaTutor() {
+      ocultarTodo();
+      document.getElementById("panelTutor").classList.remove("hidden");
+    }
+
+    function mostrarInicio() {
+      ocultarTodo();
+      document.getElementById("inicio").classList.remove("hidden");
+    }
+
+    function mostrarPasarLista() {
+      alert("🔔 Esta opción abrirá el módulo de pase de lista (puedes integrar un panel aquí).\");
+    }
+
+    function mostrarConsulta() {
+      ocultarTodo();
+      document.getElementById("consultaPanel").classList.remove("hidden");
+    }
+
+    function ocultarTodo() {
+      document.querySelectorAll('.menu-container').forEach(div => div.classList.add('hidden'));
+    }
+
+    function accederDocente() {
+      const email = document.getElementById("usuario").value.trim();
+      const password = document.getElementById("contrasena").value.trim();
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          ocultarTodo();
+          document.getElementById("panelDocente").classList.remove("hidden");
+        })
+        .catch(error => {
+          alert("❌ Error: " + error.message);
+        });
+    }
+
+    function cerrarSesion() {
+      firebase.auth().signOut().then(() => {
+        location.reload();
+      });
+    }
+
+    function mostrarRegistro() {
+      document.getElementById("loginDocente").classList.add("hidden");
+      document.getElementById("registroDocente").classList.remove("hidden");
+    }
+
+    function cancelarRegistro() {
+      document.getElementById("registroDocente").classList.add("hidden");
+      document.getElementById("loginDocente").classList.remove("hidden");
+    }
+
+    function registrarDocente() {
+      const nombre = document.getElementById("nombreDocente").value.trim();
+      const email = document.getElementById("nuevoUsuario").value.trim();
+      const password = document.getElementById("nuevaContrasena").value.trim();
+      if (!nombre || !email || !password) {
+        alert("❌ Completa todos los campos.");
+        return;
+      }
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const uid = userCredential.user.uid;
+          firebase.firestore().collection("usuarios").doc(uid).set({ nombre, email, rol: "docente" });
+          alert("✅ Registro exitoso. Ahora puedes iniciar sesión.");
+          cancelarRegistro();
+        })
+        .catch(error => {
+          alert("❌ Error al registrar: " + error.message);
+        });
+    }
+  </script>
+</body>
 </html>
