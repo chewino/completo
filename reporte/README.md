@@ -1,1 +1,0 @@
-# Proyecto de asistencia con Vite + Firebase
